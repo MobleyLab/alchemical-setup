@@ -21,7 +21,7 @@ parser.add_option('-a', dest = 'top_A',   help = 'The .top file of molecule A.',
 parser.add_option('-b', dest = 'top_B',   help = 'The .top file of molecule B.', default = 'input_files/sampl4_42.top')
 parser.add_option('-s', dest = 'mcss',    help = 'The substructure .mol2 file.', default = '')
 parser.add_option('-o', dest = 'out_dir', help = 'The output directory name.',   default = 'output_files')
-parser.add_option('-v', dest = 'verbose', help = 'Verbosity.',                   default = 0, type=int)
+parser.add_option('-v', dest = 'verbose', help = 'Verbosity. Boolean. Default: False. Sets true if -v is provided.',                   default = False, action='store_true')
 
 #===================================================================================================
 # The FEP_Molecule object to be built on the .top and .gro files.
