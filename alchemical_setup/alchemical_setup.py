@@ -143,6 +143,30 @@ def getRetainedIndices():
          molA.retained_indices, molB.retained_indices = numpy.genfromtxt(maptxt, dtype=int).transpose() - 1
       except:
          parser.error("\nCheck the format of the file %s.\nEach line of the file should represent a pair of the matched atom indices of the molecules 'A' (left) and 'B' (right)." % maptxt)
+      #Check for issues - do the retained indices seem correct as far as we can tell? Specifically, each atom should only occur once!
+      if not len(numpy.unique(molA.retained_indices)) == len(molA.retained_indices):
+         #Figure out which atom(s) occur more than once and store their numbers (+1 for output to user in same numbering scheme as original atom numbers)
+         dupes = []
+         found = []
+         for atomnr in molA.retained_indices:
+            if atomnr in found: dupes.append( atomnr+1 )
+            else: found.append( atomnr ) 
+         #Raise exception
+         raise ValueError('Error in mapping of A: Duplicate atom index/indices: %s' % dupes )      
+      if not len(numpy.unique(molB.retained_indices)) == len(molB.retained_indices):
+         #Figure out which atom(s) occur more than once and store their numbers (+1 for output to user in same numbering scheme as original atom numbers)
+         dupes = []
+         found = []
+         for atomnr in molB.retained_indices:
+            if atomnr in found: dupes.append( atomnr+1 )
+            else: found.append( atomnr ) 
+         #Raise exception
+         raise ValueError('Error in mapping of B: Duplicate atom index/indices: %s' % dupes )      
+
+      #Print debug info
+      if O.verbose:
+            print "Retaining %s atoms from A and %s atoms from B." % (len(molA.retained_indices), len(molB.retained_indices))
+
    else:
       substructure_file = O.mcss
       if not os.path.isfile(substructure_file):
@@ -531,11 +555,13 @@ if __name__ == "__main__":
   
    O = parser.parse_args()[0]
    #Check that required files actually exist before we proceed
-   filenames = [O.maptxt, O.top_A, O.top_B, O.mcss, O.top_A[:-3]+'gro', O.top_B[:-3]+'gro' ]
+   #filenames = [O.top_A, O.top_B, O.top_A[:-3]+'gro', O.top_B[:-3]+'gro' ] #The map txt file is not strictly required - can be inferred from MCSS, or vise versa
+   filenames = [O.maptxt, O.top_A, O.top_B, O.top_A[:-3]+'gro', O.top_B[:-3]+'gro' ] #The map txt file is not strictly required - can be inferred from MCSS, or vise versa. No, actually, current code requires map.txt. Checking with Pavel.
    for filenm in filenames:
         if not os.path.isfile( filenm ): 
             raise IOError("Required input file %s not found." % filenm )
-
+   #if not os.path.isfile( O.mcss) and not os.path.isfile( O.maptxt):
+   #     raise IOError("Must provide MCSS file or atom mapping.")
 
    outputdir = O.out_dir
    if not os.path.isdir(outputdir):
