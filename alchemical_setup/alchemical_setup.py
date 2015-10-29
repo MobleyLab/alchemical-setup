@@ -84,7 +84,7 @@ class FEP_Molecule:
          else:
             if O.verbose:
                 print "%s\n%s\n%s" % (('Molecule '+self.ID).center(36,'='), section_string, '='*36)
-            print section_string
+                print section_string
             return numpy.loadtxt(StringIO(section_string), dtype=str, skiprows=1, comments=';')
 
 def initializeChimericFrom(mol):
@@ -375,7 +375,7 @@ def buildBonded():
         except KeyError:
             l['parametersB'] = l['parameters']
 
-         if d_funct[ l['funct'] ]:
+        if d_funct[ l['funct'] ]:
             # The to-be-appeared set of parameters.
             if l['parameters'][-1] != parametersB[-1]:
                parametersB_left = parametersB.split()
@@ -391,7 +391,7 @@ def buildBonded():
                   print "Dih else"
                molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
 
-         else:
+        else:
             if O.verbose:
                print "    Dih else22"
             molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
@@ -406,10 +406,10 @@ def buildBonded():
             l['parametersB'] = ' '*8 + molX.bonded_at[bt][ l['k2'] ]
         except KeyError:
             l['parametersB'] = l['parameters']
-            if O.verbose:
+        if O.verbose:
             print ('aa', l['type_sequence'], l['k2'])
             print "zz%(type_sequence)s %(ijkl)s %(funct)s %(parameters)s %(parametersB)s %(k2)s" % l
-         molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
+        molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
       return
 
    lll = [z for z in SN if (numpy.array(['bo', 'an', 'di']) == z[:2]).any()]
