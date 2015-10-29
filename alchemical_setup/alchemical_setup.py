@@ -46,8 +46,7 @@ class FEP_Molecule:
 
       def dictionarize(l):
          """ [('uppermost', 0), (), ... ] ==> {'moleculetype': (583, 64), 'pairs': (2869, 974), 'angles': (3843, 1777), ... } """
-         print 200*'lllllllllllllllll', l
-	 global SN
+         global SN
          #sn, d = zip(*l)[0], {}
          sn, d = [], {}
          for i in range(len(l)-1):
@@ -56,11 +55,11 @@ class FEP_Molecule:
                k += '_%s' % '8'
             d[k] = (v1, v2-v1)
             sn.append(k)
-	 if O.verbose:
+        if O.verbose:
             print "Molecule %s topology file's sections:\n%s\n%s" % (mol_ID, sn, d)
-	 SN = sn[:-1]
-	 print SN
-	 return sn[:-1], d
+        SN = sn[:-1]
+        if O.verbose: print SN
+        return sn[:-1], d
 
       # Grep the directive titles from the topology file along with their byte offset.
       self.sn, self.d = dictionarize(grep_b_Py(top))
@@ -83,8 +82,8 @@ class FEP_Molecule:
                section_string = '#include "amber99sb.ff/forcefield.itp"\n' + section_string
             return section_string
          else:
-	    if O.verbose:
-               print "%s\n%s\n%s" % (('Molecule '+self.ID).center(36,'='), section_string, '='*36)
+            if O.verbose:
+                print "%s\n%s\n%s" % (('Molecule '+self.ID).center(36,'='), section_string, '='*36)
             print section_string
             return numpy.loadtxt(StringIO(section_string), dtype=str, skiprows=1, comments=';')
 
@@ -370,10 +369,10 @@ def buildBonded():
    def postprocessDihedrals(): 
       d_funct = {'1':0, '2':0, '3':0, '4':1, '5':0, '8':8, '9':1}
       for (i, l) in enumerate(molX.oo_bonded[bt]):
-         #print l
-	 try:
+        #print l
+        try:
             l['parametersB'] = ' '*8 + molX.bonded_at[bt][ l['k2'] ]
-	 except KeyError:
+        except KeyError:
             l['parametersB'] = l['parameters']
 
          if d_funct[ l['funct'] ]:
@@ -402,12 +401,12 @@ def buildBonded():
 
    def postprocessAnglesBonds():
       for (i, l) in enumerate(molX.oo_bonded[bt]):
-         #print l
-	 try:
+        #print l
+        try:
             l['parametersB'] = ' '*8 + molX.bonded_at[bt][ l['k2'] ]
-	 except KeyError:
+        except KeyError:
             l['parametersB'] = l['parameters']
-         if O.verbose:
+            if O.verbose:
             print ('aa', l['type_sequence'], l['k2'])
             print "zz%(type_sequence)s %(ijkl)s %(funct)s %(parameters)s %(parametersB)s %(k2)s" % l
          molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
