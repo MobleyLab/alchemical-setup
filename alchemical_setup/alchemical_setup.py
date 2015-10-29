@@ -387,13 +387,13 @@ def buildBonded():
                l['parameters_right'] = ' '*8 + "%14s%14s%14s" % tuple(parameters_right)
                molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parameters_right)s\n%(ijkl)s%(funct)8s%(parametersB_left)s%(parametersB)s\n" % l
             else:
-               if O.verbose:
-                  print "Dih else"
+               #if O.verbose:
+               #   print "Dih else"
                molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
 
         else:
-            if O.verbose:
-               print "    Dih else22"
+            #if O.verbose:
+            #   print "    Dih else22"
             molX.oo_bonded[bt][i] = "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n" % l
 
       molX.offset_dih = (len(l['parameters']), len(l['parametersB']))
