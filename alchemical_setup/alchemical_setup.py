@@ -45,16 +45,16 @@ class FEP_Molecule:
          return ordered_sn
 
       def dictionarize(l):
-         """ [('uppermost', 0), (), ... ] ==> {'moleculetype': (583, 64), 'pairs': (2869, 974), 'angles': (3843, 1777), ... } """
-         global SN
-         #sn, d = zip(*l)[0], {}
-         sn, d = [], {}
-         for i in range(len(l)-1):
-            (k, v1), v2 =l[i], l[i+1][1]
-            if k == 'dihedrals':
-               k += '_%s' % '8'
-            d[k] = (v1, v2-v1)
-            sn.append(k)
+        """ [('uppermost', 0), (), ... ] ==> {'moleculetype': (583, 64), 'pairs': (2869, 974), 'angles': (3843, 1777), ... } """
+        global SN
+        #sn, d = zip(*l)[0], {}
+        sn, d = [], {}
+        for i in range(len(l)-1):
+           (k, v1), v2 =l[i], l[i+1][1]
+           if k == 'dihedrals':
+              k += '_%s' % '8'
+           d[k] = (v1, v2-v1)
+           sn.append(k)
         if O.verbose:
             print "Molecule %s topology file's sections:\n%s\n%s" % (mol_ID, sn, d)
         SN = sn[:-1]
