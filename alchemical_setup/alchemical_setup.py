@@ -17,11 +17,13 @@ from collections import defaultdict
 
 parser = OptionParser()
 parser.add_option('-m', dest = 'maptxt',  help = 'The atom map .txt file.',      default = 'input_files/map.txt')
-parser.add_option('-a', dest = 'top_A',   help = 'The .top file of molecule A.', default = 'input_files/sampl4_1.top')
-parser.add_option('-b', dest = 'top_B',   help = 'The .top file of molecule B.', default = 'input_files/sampl4_42.top')
+parser.add_option('-a', dest = 'top_A',   help = 'The .top file of molecule A. GROMACS .gro file must have same prefix.', default = 'input_files/sampl4_1.top')
+parser.add_option('-b', dest = 'top_B',   help = 'The .top file of molecule B. GROMACS .gro file must have same prefix.', default = 'input_files/sampl4_42.top')
 parser.add_option('-s', dest = 'mcss',    help = 'The substructure .mol2 file.', default = '')
 parser.add_option('-o', dest = 'out_dir', help = 'The output directory name.',   default = 'output_files')
-parser.add_option('-v', dest = 'verbose', help = 'Verbosity. Boolean. Default: False. Sets true if -v is provided.',                   default = False, action='store_true')
+parser.add_option('-v', dest = 'verbose', help = 'Verbosity. Boolean. Default: False. Sets true if -v is provided.',
+                   default = False, action='store_true')
+
 
 #===================================================================================================
 # The FEP_Molecule object to be built on the .top and .gro files.
@@ -66,7 +68,7 @@ class FEP_Molecule:
 
       self.ID               = mol_ID           # The molecule ID: either 'A' (the initial state) or 'B' (the final state).
       self.top              = top              # The topology file name.
-      self.gro              = top[:-3] + 'gro' # The coorinates file name.
+      self.gro              = top[:-3] + 'gro' # The coordinate file name.
       self.mol2             = top[:-3] + 'mol2'# The .mol2 file name.
       self.old_new          = {}               # Initialize a dictionary to store the atom numbers mapping.
       self.type_charge_mass = {}
@@ -528,6 +530,13 @@ if __name__ == "__main__":
                   'bonded': "%(ijkl)s%(funct)8s%(parameters)s%(parametersB)s\n"} # TODO: 'bonded' (offset_dih).
   
    O = parser.parse_args()[0]
+   #Check that required files actually exist before we proceed
+   filenames = [O.maptxt, O.top_A, O.top_B, O.mcss, O.top_A[:-3]+'gro', O.top_B[:-3]+'gro' ]
+   for filenm in filenames:
+        if not os.path.isfile( filenm ): 
+            raise IOError("Required input file %s not found." % filenm )
+
+
    outputdir = O.out_dir
    if not os.path.isdir(outputdir):
       os.mkdir(outputdir)
