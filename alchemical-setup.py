@@ -62,7 +62,6 @@ class FEP_Molecule:
 	 if O.verbose:
             print "Molecule %s topology file's sections:\n%s\n%s" % (mol_ID, sn, d)
 	 SN = sn#[:-1]
-	 print SN, "SN"
 	 return sn[:-1], d
 
       # Grep the directive titles from the topology file along with their byte offset.
