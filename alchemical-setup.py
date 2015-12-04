@@ -52,14 +52,17 @@ class FEP_Molecule:
          sn, d = [], {}
          for i in range(len(l)-1):
             (k, v1), v2 =l[i], l[i+1][1]
+            _i = len(d)
             if k == 'dihedrals':
-               k += '_%s' % '8'
+               k += '_%d' % _i
+               _i += 1
+               print k, 23*"====== k ======"
             d[k] = (v1, v2-v1)
             sn.append(k)
 	 if O.verbose:
             print "Molecule %s topology file's sections:\n%s\n%s" % (mol_ID, sn, d)
-	 SN = sn[:-1]
-	 print SN
+	 SN = sn#[:-1]
+	 print SN, "SN"
 	 return sn[:-1], d
 
       # Grep the directive titles from the topology file along with their byte offset.
@@ -85,8 +88,19 @@ class FEP_Molecule:
          else:
 	    if O.verbose:
                print "%s\n%s\n%s" % (('Molecule '+self.ID).center(36,'='), section_string, '='*36)
-            print section_string
-            return numpy.loadtxt(StringIO(section_string), dtype=str, skiprows=1, comments=';')
+            print section_string, "section_string"
+            print "==%s==" % section_string
+            az = numpy.loadtxt(StringIO(section_string), dtype=str, skiprows=1, comments=';')
+            print az
+            print az.shape
+            print len(az.shape)
+            if len(az.shape)<2:
+               az = az.reshape(1, az.size)
+            print az
+
+            #print az.size
+            #return numpy.loadtxt(StringIO(section_string), dtype=str, skiprows=1, comments=';')
+            return az
 
 def initializeChimericFrom(mol):
    """Initialize molecule X that would contain the output data."""
@@ -167,6 +181,7 @@ def buildAtoms():
          if not type(f) is file:
             with open(f, 'r') as f:
                return grepPy(f, s)
+         _ = f.next()
          gl = ''
          for line in f:
             if s in line:
@@ -191,12 +206,16 @@ def buildAtoms():
          return B_full+centerA
 
       xyz = grepPy(f, residue)
+      print residue, 20*"residue"
+      print xyz, "xyz"
       if O.verbose:
          print "The excerpt of the residue %s from the .gro file %s:\n%s" % (residue, f, xyz)
       uc = (4,5,6) if len(xyz[:10].split())==2 else (3,4,5) # First two columns are sometimes glued up (as a result of "%5s%-5s"). Reading columns backwards would require a check for the presence of the velocities.
       xyz = numpy.genfromtxt(StringIO(xyz), dtype=numpy.float32, usecols=uc)
       if overlay:
          atoms_map = {'A':molA.retained_indices, 'B':molB.retained_indices}
+         print xyz, "xyz"
+         print xyz_A, "xyz_A"
          xyz = optimalOverlayWithSVD(xyz, xyz_A, atoms_map=atoms_map)
          if O.verbose:
             print "Coordinates after overlay:\n%s" % xyz
@@ -222,6 +241,7 @@ def buildAtoms():
          mol.type_charge_mass[l['nr']] = (l['type'], l['charge'], l['mass'])
          # To avoid duplicates, skip the common substructure atoms of the B molecule.
          if mol.ID == 'B':
+            print l['residue'], 45*"RRRR"
             if l['nr'] in mol.retained_nrs: continue
          # Assign new atom name.
          name_alpha = filter(type(l['atom']).isalpha, l['atom'])
@@ -246,6 +266,7 @@ def buildAtoms():
       ind_new = molX.first-1
       molX.newtop_atoms = []
       for l in molX.oo_atoms:
+         l['residue'] = 'LIG'
          ind_old = l['nr']
          ind_new += 1
          l['ind_new'] = ind_new
@@ -340,6 +361,7 @@ def buildBonded():
       print "section", section
       for els in mol.extractSection(section):
          print mol_ID, els
+         print 23*"+++mol_ID_els"
          ijkl, funct, params_list = els[:nn], els[nn], els[nn+1:]
          #mult = params_list[-1][0] # Does not make sense.
          mult = 'X' #params_list[-1][0] # Does not make sense.
@@ -378,8 +400,9 @@ def buildBonded():
 
          if d_funct[ l['funct'] ]:
             # The to-be-appeared set of parameters.
-            if l['parameters'][-1] != parametersB[-1]:
-               parametersB_left = parametersB.split()
+            #if l['parameters'][-1] != parametersB[-1]:
+            if l['parameters'][-1] != l['parametersB'][-1]:
+               parametersB_left = l['parametersB'].split()
                parametersB_left[1] = '0.00000'
                l['parametersB_left'] = "%14s%14s%14s" % tuple(parametersB_left)
 
