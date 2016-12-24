@@ -1,3 +1,9 @@
+# Alchemical setup replaced by FESetup
+
+This provided a fairly basic tool for setting up relative free energy calculations for GROMACS; however, we have been working with the authors of [FESetup](http://www.hecbiosim.ac.uk/fesetup), a much more general and better-developed tool which produces inputs for a variety of simulation packages, on testing relative free energy calculations with their workflow. In our view, FESetup should be seen as replacing/superseding alchemical-setup, therefore we are no longer maintaining this tool and it is retained here for legacy reasons.
+
+## Info on alchemical-setup: 
+
 Script: `alchemical_setup.py`
 
 An automatic setup of relative free energy calculations.
